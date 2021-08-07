@@ -10,6 +10,9 @@
 #   2014-02-14  Todd Valentic
 #               Return non-mixin options in DEFAULTS in options()
 #
+#   2021-08-07  Todd Valentic
+#               Add include feature 
+#
 ##########################################################################
 
 from ConfigParser import SafeConfigParser
@@ -37,12 +40,38 @@ class MixinConfigParser(SafeConfigParser):
 
         return opts
 
-
     def mixins(self,section):
         if self.has_option(section,'mixin'):
             return SafeConfigParser.get(self,section,'mixin').split()
         else:
             return []
+
+    def read(self, filenames):
+
+        if not isinstance(filenames, list):
+            filenames = [filenames]
+
+        for filename in filenames:
+            SafeConfigParser.read(self, filename)
+
+            sections = ['DEFAULT']
+            sections.extend(self.sections())
+
+            for section in sections:
+                for filename in self.getList(section,'include'):
+                    self.include_file(section, filename)
+
+                self.remove_option(section, 'include')
+
+    def include_file(self, dest, filename):
+
+        config = MixinConfigParser()
+        config.read(filename+'.conf')
+
+        for section in config.sections():
+            for option, value in config.items(section, raw=True):
+                key = '.'.join([filename, section, option])
+                self.set(dest, key, value)
 
     def get(self,section,option,default=None,**kw):
 
@@ -76,7 +105,12 @@ class MixinConfigParser(SafeConfigParser):
             return default
 
     def getList(self,*pos,**kw):
-        return self.get(*pos,**kw).split()
+        if 'default' not in kw:
+            kw['default'] = ''
+
+        token = kw.get('token', None)
+
+        return self.get(*pos,**kw).split(token)
 
 if __name__ == '__main__':
 
