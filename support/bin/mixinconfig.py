@@ -68,8 +68,16 @@ class MixinConfigParser(SafeConfigParser):
         config = MixinConfigParser()
         config.read(filename+'.conf')
 
+        defaults = []
+
+        for option, value in config.items('DEFAULT', raw=True):
+            self.set('DEFAULT', option, value)
+            defaults.append(option)
+
         for section in config.sections():
             for option, value in config.items(section, raw=True):
+                if option in defaults:
+                    continue
                 key = '.'.join([filename, section, option])
                 self.set(dest, key, value)
 
