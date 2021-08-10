@@ -2,3 +2,5 @@ sqlalchemy
 psycopg2
 pytz
 dateutils
+h5py
+pillow
