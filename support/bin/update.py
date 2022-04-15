@@ -56,9 +56,9 @@ class Reload:
             instance = _class.query.filter_by(**match).first()
 
             if instance:
+                logging.info('Updating %s',section)
                 for k,v in params.iteritems():
                     setattr(instance,k,v)
-                logging.info('Updating %s',section)
 
             else:
 

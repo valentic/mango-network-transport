@@ -13,6 +13,9 @@
 #   2021-08-07  Todd Valentic
 #               Add include feature 
 #
+#   2021-11-15  Todd Valentic
+#               Filter options pattern _* from defaults on include
+#
 ##########################################################################
 
 from ConfigParser import SafeConfigParser
@@ -71,7 +74,8 @@ class MixinConfigParser(SafeConfigParser):
         defaults = []
 
         for option, value in config.items('DEFAULT', raw=True):
-            self.set('DEFAULT', option, value)
+            if not option.startswith('_'):
+                self.set('DEFAULT', option, value)
             defaults.append(option)
 
         for section in config.sections():
