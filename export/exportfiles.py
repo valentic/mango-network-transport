@@ -36,7 +36,7 @@ class ExportFiles(PostFiles):
     def listStations(self):
 
         sql = 'select name from mesh_node where active=true'
-        sqlcmd = 'psql -d tincan -t -c "%s"' % sql
+        sqlcmd = 'psql -d tincan.v1-prod -t -c "%s"' % sql
 
         status, output = commands.getstatusoutput(sqlcmd)
 
