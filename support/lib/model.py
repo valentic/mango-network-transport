@@ -201,7 +201,9 @@ class FusionProduct(Base):
 
     id          = Column(Integer, primary_key=True)
     name        = Column(String, unique=True)
+    title       = Column(String)
     label       = Column(String)
+    order       = Column(Integer)
 
     def __repr__(self):
         return '<FusionProduct %s (%s)>' % (self.name,self.id)
