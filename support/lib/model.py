@@ -11,7 +11,16 @@
 #               Add StationInstrument table 
 #
 #   2022-04-21	Todd Valentic
-#		        Add QuicklookMovie table
+#	        Add QuicklookMovie table
+#
+#   2023-02-21  Todd Valentic
+#               Add Fusion data products tables
+#
+#   2023-02-27  Todd Valentic
+#               Add Level1 processed table
+#
+#   2023-05-06  Todd Valentic
+#               Added Statistics tables
 #
 ###########################################################################
 
@@ -191,6 +200,39 @@ class QuickLookMovie(Base):
         return '<QuickLookMovie %s %s>' % \
             (self.timestamp,self.stationinstrument_id)
 
+
+class ProcessedProduct(Base):
+
+    __tablename__ = 'processed_product'
+
+    id          = Column(Integer, primary_key=True)
+    name        = Column(String, unique=True)
+    title       = Column(String)
+    label       = Column(String)
+    order       = Column(Integer)
+
+    def __repr__(self):
+        return '<ProcessedProduct %s (%s)>' % (self.name,self.id)
+
+class ProcessedData(Base):
+
+    __tablename__ = 'processed_data'
+
+    id              = Column(Integer, primary_key=True)
+    timestamp       = Column(DateTime(timezone=True))
+    stationinstrument_id = Column(Integer, ForeignKey('stationinstrument.id'))
+    product_id      = Column(Integer, ForeignKey('processed_product.id'))
+
+    __table_args__ = (
+        Index('processed_data_product_id_stationinstrument_id_timestamp_idx',
+            product_id,stationinstrument_id,timestamp),
+    )
+
+    def __repr__(self):
+        return '<ProcessedData %s %s>' % \
+            (self.timestamp,self.stationinstrument_id)
+
+
 #------------------------------------------------------------------------------
 # Fusion Products 
 #------------------------------------------------------------------------------
@@ -226,6 +268,23 @@ class FusionData(Base):
 
     def __repr__(self):
         return '<FustionData %s %s >' % (self.product_id, self.timestamp)
+
+#------------------------------------------------------------------------------
+# Statistics Products 
+#------------------------------------------------------------------------------
+
+class StatisticProduct(Base):
+
+    __tablename__ = 'statisticproduct'
+
+    id          = Column(Integer, primary_key=True)
+    name        = Column(String, unique=True)
+    title       = Column(String)
+    label       = Column(String)
+    order       = Column(Integer)
+
+    def __repr__(self):
+        return '<StatisticProduct %s (%s)>' % (self.name,self.id)
 
 #------------------------------------------------------------------------------
 # System 
