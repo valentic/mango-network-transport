@@ -22,7 +22,12 @@
 #   2023-05-06  Todd Valentic
 #               Added Statistics tables
 #
+#   2026-02-20  Todd Valentic
+#               Add ability to set database from environment
+#
 ###########################################################################
+
+import os
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, Column, ForeignKey, func, Index
@@ -32,8 +37,12 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects import postgresql
 
-database = 'postgresql://@/mango'
-#database = 'postgresql://transport@localhost:15432/mango'
+DEFAULT_URI = 'postgresql://@/mango'
+#DEFAULT_URI = 'postgresql://transport@localhost:15432/mango'
+#DEFAULT_URI = 'postgresql://valentic@localhost:15432/mango-test'
+
+database = os.environ.get("MANGO_DATABASE_URI", DEFAULT_URI)
+
 session = scoped_session(sessionmaker())
 
 Base = declarative_base()
